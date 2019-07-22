@@ -1,0 +1,8 @@
+{
+    "db": {
+        "mongodb": {
+            "connection_string": "mongodb://user:<username>@<password>.mlab.com:17899/buy_list"
+        },
+        "use": "mongodb"
+    }
+}
