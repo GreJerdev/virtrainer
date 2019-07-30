@@ -1,153 +1,104 @@
 "use strict";
 
-let mysql_provider = require("./database/mysql_provider")();
+let db = require('../mongodb_provider');
+let mongo = require('mongodb');
+let Training = require("../../../models/training");
 
-module.exports = class buyListItemsProvider {
-  constructor() { }
-  async addItemToList(item_id, list_id, type, quantity, unit, conn = null) {
-    let log_path = "buy_list_to_item_db_provider/createBuyListToItem -";
+module.exports = class trainingProvider extends db.MongoDBProvider {
+
+  constructor() {
+    super();
+    this.collection_name = 'training';
+  }
+
+  async create(training, conn) {
+    let log_path = 'training/create';
+    logger.info(`${log_path} - start`);
     let is_external_connection = true;
-    if (conn == null) {
-      conn = await mysql_provider.getConnection();
-      is_external_connection = false;
-    }
     try {
-      let params = [list_id, item_id, type, quantity, unit];
-      let query = `
-        SET @list_id = fn_uuid_to_bin(?);
-        SET @item_id = fn_uuid_to_bin(?);
-        SET @item_type = ?;
-        SET @quantity = ?;
-        SET @unit = ?;
-        
-        
-        INSERT INTO buy_list_to_items
-        (buy_list_to_items_buy_list_id,
-        buy_list_item_item_id,
-        buy_list_to_item_item_type,
-        buy_list_to_item_quantity,
-        buy_list_to_item_unit
-        )
-        VALUES
-        (@list_id,
-        @item_id ,
-        @item_type ,
-        @quantity,
-        @unit
-        );`;
-
-      let result = await mysql_provider.executeQueryWithConnection(conn, query, params);
-
-      if (!is_external_connection) {
-        mysql_provider.commitTransaction(conn);
-      }
-      return Promise.resolve(result);
+      logger.verbose(`${log_path} - parameters - training - ${training}`);
+      this.db_connection = await this.getConnection();
+      let training_collection = this.db_connection.collection(this.collection_name);
+      training._id = this.uuid2MongoId(training.id);
+      let result = await training_collection.insertOne(training);
+      let item = await this.getById(result.insertedId.toString());
+      logger.info(`${log_path} - end`);
+      return Promise.resolve(item);
     } catch (err) {
-      if (!is_external_connection) {
-        mysql_provider.rollbackTransaction(conn);
+      if (is_external_connection === false) {
       }
-      console.log(err);
+      logger.error(`${log_path} error - ${err}`);
       return Promise.reject(err);
     }
   }
 
-  async updateBuyItemInList(item_id, list_id, type, quantity, unit, bought, conn = null) {
-    let log_path = "buy_list_to_item_db_provider/updateBuyListToItem -";
-    let is_external_connection = true;
-    if (conn == null) {
-      conn = await mysql_provider.getConnection();
-      is_external_connection = false;
-    }
+  async update(training, conn = null) {
+    let log_path = 'training/update';
+    logger.info(`${log_path} - start`);
     try {
-      let params = [list_id, item_id, type, quantity, unit, bought];
-      query = `
-        SET @list_id = fn_uuid_to_bin(?);
-        SET @item_id = fn_uuid_to_bin(?);
-        SET @item_type = ?;
-        SET @quantity = ?;
-        SET @unit = ?;
-        SET @bought = ?;
-        
-        UPDATE buy_list_to_items
-        SET
-        buy_list_to_items_buy_list_id = @list_id,
-        ${type ? 'buy_list_to_item_item_type = @item_type,' : ''}
-        ${quantity ? 'buy_list_to_item_quantity = @quantity ,' : ''}
-        ${unit ? 'buy_list_to_item_unit = @unit ,' : ''}
-        ${bought ? 'buy_list_to_item_bought = @bought ' : ''} 
-        WHERE buy_list_to_items_buy_list_id = @list_id AND buy_list_item_item_id = @item_id;
-        `;
-      let result = await mysql_provider.executeQueryWithConnection(conn, query, params);
-      if (!is_external_connection) {
-        mysql_provider.commitTransaction(conn);
-      }
-      return Promise.resolve(result);
+      logger.verbose(`${log_path} - parameters - training - ${training}`);
+      let update_results = await db.MongoDBProvider.prototype.updateOne.call(this, training, Training, null, conn);
+      logger.info(`${log_path} - end`);
+      return Promise.resolve(update_results);
     } catch (err) {
-      if (!is_external_connection) {
-        mysql_provider.rollbackTransaction(conn);
-      }
-      console.log(err);
+      logger.err(`${log_path} error - ${err}`);
       return Promise.reject(err);
     }
   }
 
-  async removeItemFromList(item_id, list_id, conn = null) {
-    let log_path = "buy_list_to_item_db_provider/deleteBuyListToItem -";
-    let is_external_connection = true;
-    if (conn == null) {
-      conn = await mysql_provider.getConnection();
-      is_external_connection = false;
-    }
+  async delete(id, conn) {
+    let log_path = 'training/delete';
+    logger.info(`${log_path} - start`);
     try {
-      let params = [list_id, item_id];
-      query = `
-        SET @list_id = fn_uuid_to_bin(?);
-        SET @item_id = fn_uuid_to_bin(?);
-        
-        UPDATE buy_list_to_items
-        SET buy_list_to_item_is_deleted = 1
-        WHERE buy_list_to_items_buy_list_id = @list_id AND buy_list_item_item_id = @item_id;
-        `;
-      let result = await mysql_provider.executeQueryWithConnection(
-        conn,
-        query,
-        params
-      );
-      if (!is_external_connection) {
-        mysql_provider.commitTransaction(conn);
-      }
+      logger.verbose(`${log_path} - parameters - training_id - ${id}`);
+      this.db_connection = await this.getConnection();
+      var newvalues = {$set: {is_deleted: false}};
+      let training = await this.deleteFromCollection(id, this.db_connection);
+      logger.info(`${log_path} - end`);
       return Promise.resolve(result);
     } catch (err) {
-      if (!is_external_connection) {
-        mysql_provider.rollbackTransaction(conn);
-      }
-      console.log(err);
+      logger.error(`${log_path} error - ${err}`);
       return Promise.reject(err);
     }
   }
 
-  async getListItems(list_id, conn = null) {
-    let log_path = "buy_list_to_item_db_provider/getItemsByListId -";
+  async getById(id, conn) {
+    let log_path = 'training/getById';
+    logger.info(`${log_path} - start`);
     try {
-      let params = [list_id];
-      let query = `
-
-SET @list_id = fn_bin_from_uuid(?);
-
-SELECT fn_uuid_from_bin(buy_list_to_items_buy_list_id) AS buy_list_to_items_buy_list_id,
-    fn_uuid_from_bin(buy_list_item_item_id) AS buy_list_item_item_id,
-    buy_list_to_item_item_type,
-    buy_list_to_item_quantity,
-    buy_list_to_item_unit,
-    buy_list_to_item_is_deleted,
-    buy_list_to_item_bought
-FROM buy_list_to_items_buy_list_id = @list_id;`;
-      let result = await mysql_provider.executeQueryWithConnection(conn, query, params);
-      return Promise.resolve(result);
+      logger.verbose(`${log_path} - parameters - training_id - ${id}`);
+      let training = await db.MongoDBProvider.prototype.getById.call(this, id, conn);
+      logger.info(`${log_path} - end`);
+      return Promise.resolve(training);
     } catch (err) {
-      console.log(err);
+      logger.error(`${log_path} error - ${err}`);
       return Promise.reject(err);
     }
   }
+
+  async getList(search_by, order_by, page_number, page_size, connection) {
+    let log_path = 'training/getList';
+    logger.info(`${log_path} - start`);
+    try {
+      search_by = search_by || '';
+      logger.verbose(`${log_path} - parameters - search_by - ${search_by}, order_by - ${order_by}, page_number - ${page_number}, page_size - ${page_size}`);
+      let filter = {
+        "$and": [
+          {"is_deleted": false},
+          {
+            "$or": [
+              {"name": {"$regex": search_by, "$options": "i"}},
+              {"description": {"$regex": search_by, "$options": "i"}}
+            ]
+          }]
+      };
+      let trainings = await this.getCollectionList(filter, order_by, page_number, page_size);
+      logger.info(`${log_path} - end`);
+      return Promise.resolve(training);
+    } catch (err) {
+      logger.error(`${log_path} error - ${err}`);
+      return Promise.reject(err);
+    }
+  }
+
 };
-
