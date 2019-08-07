@@ -1,5 +1,5 @@
 let mongodb_provider = require('./mongodb_provider');
-let mysql_provider = require('./mysql_provider');
+let mysql_provider = null;//require('./mysql_provider');
 let configuration = require('../../configuration/config');
 
 

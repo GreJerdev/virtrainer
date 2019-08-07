@@ -2,8 +2,8 @@
 
 const express = require('express'),
   router = express.Router();
-const ExerciseService = require('../services/exercise-service')
-const exerciseModel = require('../models/exercise-model')
+const ExerciseService = require('../services/exercise-service');
+
 router.post('/', async (req, res) => {
   try {
     logger.info("exercise get ")

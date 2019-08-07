@@ -1,17 +1,17 @@
 "use strict";
 
 let ERROR = require('../utilities/errors');
-let provider_factory = require('./database/datebase-provider-factory');
-let BuyList = require('../models/buy-list-model');
+let provider_factory = require('./provider/datebase-provider-factory');
+let BuyList = require('../models/exercise');
 
-module.exports = class buyListProvider {
+module.exports = class ExerciseProvider {
 
     constructor() {
-        this.db_connection = provider_factory.getObjectDBProvider('buy_list');
+        this.db_connection = provider_factory.getObjectDBProvider('exercise');
     }
 
-    async createBuyList(buy_list, conn) {
-        let log_path = 'buy-list-provider/create_buy_list -';
+    async createExercis(buy_list, conn) {
+        let log_path = 'ExerciseProvider/createExercis -';
         let is_external_connection = true;
         try {
             let result = await this.db_connection.create(buy_list);
@@ -27,8 +27,8 @@ module.exports = class buyListProvider {
         }
     }
 
-    async updateBuyList(buy_list, conn) {
-        let log_path = 'buy-list-provider/update_buy_list -';
+    async updateExercise(exercise, conn) {
+        let log_path = 'ExerciseProvider/updateExercise';
         let is_external_connection = false;
         try {
             if (!conn) {
@@ -42,8 +42,8 @@ module.exports = class buyListProvider {
         }
     }
 
-    async deleteBuyList(id, conn = null) {
-        let log_path = 'buy-list-provider/delete_buy_list -';
+    async deleteExercise(id, conn = null) {
+        let log_path = 'ExerciseProvider/delete_exercise';
         let is_external_connection = false;
         try {
             if (!conn) {
@@ -57,18 +57,18 @@ module.exports = class buyListProvider {
         }
     }
 
-    async getBuyListById(buy_list_id, conn) {
-        let log_path = 'buy-list-provider/getBuyListById -';
-        let buy_list = new BuyList();
+    async getExerciseById(exercise_id, conn) {
+        let log_path = 'ExerciseProvider/getExerciseById';
+        let exercise = new Exercise();
 
         try {
-            let result = await this.db_connection.getById(buy_list_id);
+            let result = await this.db_connection.getById(exercise_id);
             if (result) {
-                let buy_list = new BuyList(result);
-                return Promise.resolve(buy_list);
+                let exercise = new Exercise(result);
+                return Promise.resolve(exercise);
             } else {
                 logger.error(`${log_path} error - ${buy_list_id} not found`);
-                return Promise.reject(ERROR.ERROR_BUY_LIST_NOT_FOUND);
+                return Promise.reject(ERROR.ERROR_EXERCISE_NOT_FOUND);
             }
         } catch (err) {
             logger.error(`${log_path} error - ${err}`);
@@ -76,8 +76,8 @@ module.exports = class buyListProvider {
         }
     }
 
-    async getListOfBuyList(search_by, order_by, page_number, page_size, limit, conn) {
-        let log_path = 'buy-list-provider/getListOfBuyList -';
+    async getExerciseList(search_by, order_by, page_number, page_size, limit, conn) {
+        let log_path = 'exercise-provider/getExerciseList';
         try {
             let result = await this.db_connection.getList(search_by, order_by, page_number, page_size, limit, conn);
             return Promise.resolve(result);
@@ -87,19 +87,6 @@ module.exports = class buyListProvider {
         }
     }
 
-    async additems(buy_list_id,list_items ,conn = null) {
-        let log_path = 'buy-list-provider/delete_buy_list -';
-        let is_external_connection = false;
-        try {
-            if (!conn) {
 
-            }
-            let result = await this.db_connection.additems(buy_list_id,list_items, conn);
-            return Promise.resolve(result);
-        } catch (err) {
-            logger.error(`${log_path} error - ${err}`);
-            return Promise.reject(err);
-        }
-    }
 
 };
