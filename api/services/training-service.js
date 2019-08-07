@@ -1,8 +1,9 @@
-const BuyList = require('../models/buy-list-model');
-let buyListDBProvider = require("../providers/buy-list-provider");
+const BuyList = require('../models/training');
+let buyListDBProvider = require("../db_services/training-db-service");
 let uuid = require('uuid').v4;
 
-export class Trainig{
+
+module.exports = class TrainigService{
 
     constructor(db_provider = null) {
         this.db_provider = db_provider || new buyListDBProvider();

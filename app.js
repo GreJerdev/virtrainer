@@ -1,13 +1,13 @@
 'use strict';
 
-const config = require( "./configuration/config");
+const config = require( "./api/configuration/config");
 //const db = require("./providers/database/mysql_provider");
-require("./utilities/logger");
+require("./api/utilities/logger");
 
 const express = require('express');
 const app = express();
-const load_routes = require('./routes/routes'); 
-const init_middleware = require('./middlewares/load-middlewares');
+const load_routes = require('./api/routes/routes');
+const init_middleware = require('./api/middlewares/load-middlewares');
 
 init_middleware(app);
 load_routes(app, express);

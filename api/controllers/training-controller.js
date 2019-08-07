@@ -1,9 +1,9 @@
 'use strict';
 
 const express = require('express'),
-  router = express.Router();
-const trainingService = require('../services/recipe-service')
-const trainingModel = require('../models/training')
+router = express.Router();
+const trainingService = require('../services/training-service');
+const trainingModel = require('../models/training');
 
 router.post('/', async (req, res) => {
   try {
