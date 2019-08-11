@@ -1,49 +1,49 @@
-const BuyList = require('../models/training');
-let buyListDBProvider = require("../db_services/training-db-service");
+const Training = require('../models/training');
+let trainingDBProvider = require("../db_services/training-db-service");
 let uuid = require('uuid').v4;
 
 
-module.exports = class TrainigService{
+module.exports = class TrainingService{
 
     constructor(db_provider = null) {
-        this.db_provider = db_provider || new buyListDBProvider();
+        this.db_provider = db_provider || new trainingDBProvider();
     }
 
-    async createBuyList(buy_list) {
-        let method_name = 'BuyListService/createBuyList';
+    async createTraining(training) {
+        let method_name = 'TrainingService/createTrainig';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
-            buy_list.id = uuid();
-            buy_list.create_at = new Date().getTime();
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/createBuyList`);
-            buy_list = await this.db_provider.createBuyList(buy_list);
+            logger.verbose(`${method_name} - parameter - training - ${training}`);
+            training.id = uuid();
+            training.create_at = new Date().getTime();
+            logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/createTraining`);
+            training = await this.db_provider.createTraining(training);
             logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_list);
+            return Promise.resolve(training);
         } catch (err) {
-            logger.error(`${method_name} - error Fails to create buy_list ${err}`);
+            logger.error(`${method_name} - error Fails to create training ${err}`);
             return Promise.reject(err);
         }
     }
 
-    async updateBuyList(buy_list) {
-        let method_name = 'BuyListService/updateBuyList';
+    async updateTraining(training) {
+        let method_name = 'TrainingService/updateTraining';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/createBuyList`);
-            let buy_list_updated = await this.db_provider.updateBuyList(buy_list);
+            logger.verbose(`${method_name} - parameter - Training - ${training}`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/updateTraining`);
+            let training_updated = await this.db_provider.updateTraining(training);
             logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_list_updated);
+            return Promise.resolve(training_updated);
         } catch (err) {
-            logger.error(`${method_name} - error Fails to create buy_list ${err}`);
+            logger.error(`${method_name} - error Fails to create training ${err}`);
             return Promise.reject(err);
         }
     }
 
     async getById(buy_list_id) {
-        let method_name = 'BuyListService/getById';
+        let method_name = 'TrainingService/getById';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
@@ -58,7 +58,7 @@ module.exports = class TrainigService{
     }
 
     async deleteBuyList() {
-        let method_name = 'BuyListService/deleteBuyList';
+        let method_name = 'TrainingService/deleteBuyList';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
@@ -73,7 +73,7 @@ module.exports = class TrainigService{
     }
 
     async getListBuyList(search_by, order_by, page_number, page_size) {
-        let method_name = 'BuyListService/createBuyList';
+        let method_name = 'TrainingService/createBuyList';
         logger.info(`${method_name} - start`);
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
@@ -89,7 +89,7 @@ module.exports = class TrainigService{
     }
 
     async addItems(buy_list_id, items) {
-        let method_name = 'BuyListService/addItems';
+        let method_name = 'TrainingService/addItems';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - calling BuyListItem/parseListFromInput`);
@@ -120,7 +120,7 @@ module.exports = class TrainigService{
 
 
     async validateItems(list_items) {
-        let method_name = 'BuyListService/validateItems';
+        let method_name = 'TrainingService/validateItems';
         logger.info(`${method_name} - start`);
         try {
             let error = null;

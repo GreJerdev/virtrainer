@@ -10,4 +10,4 @@ module.exports = (app, express) => {
     app.use('/api/v1/training', training);
     app.use('/api/v1/exercise', exercise);
     app.get('/', (req, res) => res.send('Hello World!'));
-}
+};

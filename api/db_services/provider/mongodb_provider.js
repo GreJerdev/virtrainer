@@ -8,25 +8,13 @@ module.exports = function () {
     return {
         getMongooseConnection: mongoose.connection,
     }
-}
-
+};
+/*
 mongoose.connect(configuration.db.mongodb.connection_string);
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    // we're connected!
-    console.log("connected");
-
-    var kittySchema = new mongoose.Schema({
-        name: String
-    });
-
-    // NOTE: methods must be added to the schema before compiling it with mongoose.model()
-    kittySchema.methods.speak = function () {
-        var greeting = this.name
-            ? "Meow name is " + this.name
-            : "I don't have a name";
         console.log(greeting);
     }
 
@@ -56,4 +44,4 @@ db.once('open', function () {
 
 
 });
-
+*/
