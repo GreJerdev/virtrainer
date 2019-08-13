@@ -1,5 +1,6 @@
 const Training = require('../models/training');
 let trainingDBProvider = require("../db_services/training-db-service");
+counst
 let uuid = require('uuid').v4;
 
 

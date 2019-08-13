@@ -3,10 +3,10 @@ let mysql_provider = null;//require('./mysql_provider');
 let configuration = require('../../configuration/config');
 
 
-module.exports = function (custom_db_provider) {
+module.exports = function (object_name) {
         switch (configuration.db.use) {
             case 'mongodb':
-                return mongodb_provider;
+                return getMongoDBProvider(object_name);
                 break;
             case 'mysql':
                 return mysql_provider;
@@ -15,4 +15,18 @@ module.exports = function (custom_db_provider) {
                 return custom_db_provider;
                 break;
         }
+
+    function getMongoDBProvider(object_name){
+            switch (object_name) {
+                case '':
+                    break;
+                case 'traning':
+
+                    break;
+
+
+            }
+    }
+
+
 };
