@@ -1,7 +1,7 @@
 let mongodb_provider = require('./mongodb_provider');
 let mysql_provider = null;//require('./mysql_provider');
 let configuration = require('../../configuration/config');
-
+const trainingMongoDBProvider = require('./mongo/training-mongo-provider');
 
 module.exports = function (object_name) {
         switch (configuration.db.use) {
@@ -20,8 +20,8 @@ module.exports = function (object_name) {
             switch (object_name) {
                 case '':
                     break;
-                case 'traning':
-
+                case 'training':
+                    return new trainingMongoDBProvider();
                     break;
 
 

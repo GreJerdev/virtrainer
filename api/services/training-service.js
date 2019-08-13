@@ -1,13 +1,12 @@
 const Training = require('../models/training');
 let trainingDBProvider = require("../db_services/training-db-service");
-counst
 let uuid = require('uuid').v4;
 
 
 module.exports = class TrainingService{
 
     constructor(db_provider = null) {
-        this.db_provider = db_provider || new trainingDBProvider();
+        this.db_provider =  new trainingDBProvider();
     }
 
     async createTraining(training) {
@@ -19,7 +18,7 @@ module.exports = class TrainingService{
             training.create_at = new Date().getTime();
             logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
             logger.verbose(`${method_name} - calling TrainingDBProvider/createTraining`);
-            training = await this.db_provider.createTraining(training);
+            training = await this.db_provider.create(training);
             logger.info(`${method_name} - end`);
             return Promise.resolve(training);
         } catch (err) {
@@ -34,7 +33,7 @@ module.exports = class TrainingService{
         try {
             logger.verbose(`${method_name} - parameter - Training - ${training}`);
             logger.verbose(`${method_name} - calling TrainingDBProvider/updateTraining`);
-            let training_updated = await this.db_provider.updateTraining(training);
+            let training_updated = await this.db_provider.update(training);
             logger.info(`${method_name} - end`);
             return Promise.resolve(training_updated);
         } catch (err) {
@@ -49,7 +48,7 @@ module.exports = class TrainingService{
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/getBuyListById`);
-            let buy_list = await this.db_provider.getBuyListById(buy_list_id);
+            let buy_list = await this.db_provider.getById(buy_list_id);
             logger.info(`${method_name} - end`);
             return buy_list;
         } catch (err) {
@@ -58,13 +57,13 @@ module.exports = class TrainingService{
         }
     }
 
-    async deleteBuyList() {
+    async deleteTraining() {
         let method_name = 'TrainingService/deleteBuyList';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/deleteBuyList`);
-            let buy_list = await this.db_provider.deleteBuyList(buy_list_id);
+            let buy_list = await this.db_provider.delete(buy_list_id);
             logger.info(`${method_name} - end`);
             return buy_list;
         } catch (err) {
@@ -73,13 +72,13 @@ module.exports = class TrainingService{
         }
     }
 
-    async getListBuyList(search_by, order_by, page_number, page_size) {
+    async getListTraining(search_by, order_by, page_number, page_size) {
         let method_name = 'TrainingService/createBuyList';
         logger.info(`${method_name} - start`);
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/getListOfBuyList`);
-            let buy_lists = await this.db_provider.getListOfBuyList(search_by, order_by, page_number, page_size);
+            let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
             return Promise.resolve(buy_lists);

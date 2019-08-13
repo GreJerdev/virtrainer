@@ -11,13 +11,13 @@ module.exports = class trainingProvider extends db.MongoDBProvider {
     this.collection_name = 'training';
   }
 
-  async create(training, conn) {
+  async create(training, conn = null) {
     let log_path = 'training/create';
     logger.info(`${log_path} - start`);
     let is_external_connection = true;
     try {
       logger.verbose(`${log_path} - parameters - training - ${training}`);
-      this.db_connection = await this.getConnection();
+      this.db_connection = conn || await this.getConnection();
       let training_collection = this.db_connection.collection(this.collection_name);
       training._id = this.uuid2MongoId(training.id);
       let result = await training_collection.insertOne(training);

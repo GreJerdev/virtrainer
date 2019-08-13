@@ -4,17 +4,17 @@ let ERROR = require('../utilities/errors');
 let provider_factory = require('./provider/datebase-provider-factory');
 let Training = require('../models/training');
 
-module.exports = class TrainingProvider {
+module.exports = class TrainingService {
 
     constructor() {
-        this.db_connection = provider_factory();
+        this.db_connection = new provider_factory('training')
     }
 
-    async createTraining(training, conn) {
+    async create(training, conn) {
         let log_path = 'TrainingProvider/createTraining -';
         let is_external_connection = true;
         try {
-            let result = await this.db_connection.createTraining(training);
+            let result = await this.db_connection.create(training);
             logger.verbose(`${log_path} db result - ${result}`);
             training = new Training(result);
             return Promise.resolve(training);
@@ -27,7 +27,7 @@ module.exports = class TrainingProvider {
         }
     }
 
-    async updateTraining(training, conn) {
+    async update(training, conn) {
         let log_path = 'TrainingProvider/updateTraining -';
         let is_external_connection = false;
         try {
@@ -42,7 +42,7 @@ module.exports = class TrainingProvider {
         }
     }
 
-    async deleteTraining(id, conn = null) {
+    async delete(id, conn = null) {
         let log_path = 'training-provider/deleteTraining -';
         let is_external_connection = false;
         try {
@@ -57,7 +57,7 @@ module.exports = class TrainingProvider {
         }
     }
 
-    async getTrainingById(training_id, conn) {
+    async getById(training_id, conn) {
         let log_path = 'TrainingProvider/getTrainingById -';
         let training = new Training();
 
@@ -76,7 +76,7 @@ module.exports = class TrainingProvider {
         }
     }
 
-    async getListOfTraining(search_by, order_by, page_number, page_size, limit, conn) {
+    async getList(search_by, order_by, page_number, page_size, limit, conn) {
         let log_path = 'TrainingProvider/getListOfTraining -';
         try {
             let result = await this.db_connection.getList(search_by, order_by, page_number, page_size, limit, conn);
