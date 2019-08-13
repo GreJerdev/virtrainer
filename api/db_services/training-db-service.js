@@ -7,14 +7,14 @@ let Training = require('../models/training');
 module.exports = class TrainingProvider {
 
     constructor() {
-        this.db_connection = provider_factory.getObjectDBProvider('training');
+        this.db_connection = provider_factory();
     }
 
     async createTraining(training, conn) {
         let log_path = 'TrainingProvider/createTraining -';
         let is_external_connection = true;
         try {
-            let result = await this.db_connection.create(training);
+            let result = await this.db_connection.createTraining(training);
             logger.verbose(`${log_path} db result - ${result}`);
             training = new Training(result);
             return Promise.resolve(training);

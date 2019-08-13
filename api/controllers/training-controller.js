@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
     let training_service = new trainingService();
     let training = req.body;
     logger.silly(training)
-    training = await training_service.createtraining(training);
+    training = await training_service.createTraining(training);
     res.done(training);
   } catch (err) {
     res.error(err);
