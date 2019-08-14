@@ -1,7 +1,10 @@
-let mongodb_provider = require('./mongodb_provider');
+"use strict";
+
+
 let mysql_provider = null;//require('./mysql_provider');
 let configuration = require('../../configuration/config');
 const trainingMongoDBProvider = require('./mongo/training-mongo-provider');
+const exerciseMongoDBProvider = require('./mongo/exercise-mongo-provider');
 
 module.exports = function (object_name) {
         switch (configuration.db.use) {
@@ -23,7 +26,9 @@ module.exports = function (object_name) {
                 case 'training':
                     return new trainingMongoDBProvider();
                     break;
-
+                case 'exercise':
+                    return new exerciseMongoDBProvider();
+                    break;
 
             }
     }

@@ -1,30 +1,30 @@
 'use strict';
 
-'use strict';
+const BaseModel = require('./base_model');
 
-module.exports = {
-    create: function (exercise) {
-        let new_exercise = {
-            id: "",
-            name: "",
-            description: "",
-            youtupe_link: "",
-            exercise_duration: 0,
-            number_of_repetitions: 0
-        }
-        if (!exercise) {
-            return new_exercise;
-        }
+module.exports = class Exercise extends BaseModel {
 
-        new_exercise.id = exercise.id;
-        new_exercise.name = exercise.name;
-        new_exercise.description = exercise.description;
-        new_exercise.youtupe_link = exercise.youtupe_link;
-        new_exercise.exercise_duration = exercise.exercise_duration;
-        new_exercise.number_of_repetitions = exercise.number_of_repetitions;
-        return new_training;
-    },
-    parseToResponse: (exercise) => {
-        return exercise ;
+
+    constructor(exercise) {
+        super(exercise);
+        this.id = "";
+        this.name = "";
+        this.description = "";
+        this.youtupe_link = "";
+        this.exercise_duration = 0;
+        this.number_of_repetitions = 0;
+
+        if (exercise) {
+            this.id = exercise.id;
+            this.name = exercise.name;
+            this.description = exercise.description;
+            this.youtupe_link = exercise.youtupe_link;
+            this.exercise_duration = exercise.exercise_duration;
+            this.number_of_repetitions = exercise.number_of_repetitions;
+        }
+    }
+
+    parseToResponse(exercise){
+        return exercise;
     }
 }

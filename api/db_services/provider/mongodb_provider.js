@@ -81,9 +81,9 @@ exports.MongoDBProvider = class MongoDBProvider {
         try {
             logger.verbose(`${log_path} - parameters - buy_list_id - ${id}`);
             this.db_connection = await this.getConnection();
-            let buy_list_collection = this.db_connection.collection(this.collection_name);
+            let collection = this.db_connection.collection(this.collection_name);
             let mongo_id = this.uuid2MongoId(id);
-            let object = await buy_list_collection.findOne({
+            let object = await collection.findOne({
                 $and: [
                     {_id: mongo_id},
                     {"is_deleted": false}
@@ -103,11 +103,11 @@ exports.MongoDBProvider = class MongoDBProvider {
         let is_external_connection = true;
         try {
             conn = conn || await this.getConnection();
-            let buy_list_collection = conn.collection(collection_name || this.collection_name);
+            let collection = conn.collection(collection_name || this.collection_name);
             let mongo_id = new mongo.Binary(Buffer.from(id, 'utf8'));
             let new_value = {$set: {is_deleted: true}};
             let my_query = {_id: mongo_id};
-            let result = await buy_list_collection.updateOne(my_query, new_value);
+            let result = await collection.updateOne(my_query, new_value);
             logger.verbose(`${log_path} - result items - ${result}`);
             return Promise.resolve(true);
         } catch (err) {
