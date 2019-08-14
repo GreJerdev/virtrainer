@@ -1,6 +1,8 @@
 'use strict';
 
 const BaseModel = require('./base_model');
+const ExerciseModel = require('./exercise');
+
 
 module.exports = class Training extends BaseModel {
 
@@ -16,7 +18,9 @@ module.exports = class Training extends BaseModel {
             this.id = training.id;
             this.name = training.name;
             this.description = training.description;
-            this.exercises = training.exercises;
+            if(training.exercises) {
+                this.exercises = training.exercises.map(exercises=> new ExerciseModel(exercises) );
+            };
         }
     }
 
