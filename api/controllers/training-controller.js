@@ -3,13 +3,13 @@
 const express = require('express'),
     router = express.Router();
 const trainingService = require('../services/training-service');
-const trainingModel = require('../models/training');
+const TrainingModel = require('../models/training');
 
 router.post('/', async (req, res) => {
     try {
         logger.info("training create ");
         let training_service = new trainingService();
-        let training = new trainingModel(req.body);
+        let training = TrainingModel.parseFromCreateRequest(req.body);
         logger.silly(training);
         training = await training_service.createTraining(training);
         res.done(training);

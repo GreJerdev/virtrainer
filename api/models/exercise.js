@@ -27,4 +27,30 @@ module.exports = class Exercise extends BaseModel {
     parseToResponse(exercise){
         return exercise;
     }
+
+    static parseFromCreateRequest(exercise) {
+        if (exercise){
+            exercise.id = null;
+
+        }
+        return Exercise.parseFromUpdateRequest(exercise);
+    }
+
+    static parseFromUpdateRequest(exercise) {
+        let return_exercise = new Exercise();
+        return_exercise.id = exercise.id;
+        return_exercise.name = exercise.name;
+        return_exercise.description = exercise.description;
+        return_exercise.youtupe_link = exercise.youtupe_link;
+        return_exercise.exercise_duration = exercise.exercise_duration;
+        return_exercise.number_of_repetitions = exercise.number_of_repetitions;
+        return return_exercise
+    }
+
+    static parseExerciseInputList(exerciseList){
+       if (exerciseList && Array.isArray(exerciseList)){
+           return exerciseList.map(exercise=> Exercise.parseFromUpdateRequest(exercise));
+       }
+       return [];
+    }
 }

@@ -14,12 +14,12 @@ module.exports = class Training extends BaseModel {
         this.description = "";
         this.exercises = [];
 
-        if( training){
+        if (training) {
             this.id = training.id;
             this.name = training.name;
             this.description = training.description;
-            if(training.exercises) {
-                this.exercises = training.exercises.map(exercises=> new ExerciseModel(exercises) );
+            if (training.exercises) {
+                this.exercises = training.exercises.map(exercises => new ExerciseModel(exercises));
             };
         }
     }
@@ -27,4 +27,23 @@ module.exports = class Training extends BaseModel {
     parseToResponse(training) {
         return training;
     }
-}
+
+    static parseFromCreateRequest(training) {
+        if (training){
+            training.id = null;
+            return Training.parseFromUpdateRequest(training);
+        }
+    }
+
+    static parseFromUpdateRequest(training) {
+        let return_training = new Training();
+        return_training.id = training.id;
+        return_training.name = training.name;
+        return_training.description = training.description;
+        if (training.exercises) {
+            return_training.exercises = ExerciseModel.parseExerciseInputList( training.exercises.map(exercises => new ExerciseModel(exercises)));
+        };
+        return return_training;
+    }
+
+};
