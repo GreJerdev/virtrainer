@@ -13,6 +13,7 @@ module.exports = class Exercise extends BaseModel {
         this.youtupe_link = "";
         this.exercise_duration = 0;
         this.number_of_repetitions = 0;
+        this.tags = [];
 
         if (exercise) {
             this.id = exercise.id;
@@ -21,6 +22,7 @@ module.exports = class Exercise extends BaseModel {
             this.youtupe_link = exercise.youtupe_link;
             this.exercise_duration = exercise.exercise_duration;
             this.number_of_repetitions = exercise.number_of_repetitions;
+            this.tags = exercise.tags || [];
         }
     }
 
