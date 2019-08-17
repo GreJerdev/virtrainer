@@ -12,8 +12,8 @@ module.exports = class Exercise extends BaseModel {
         this.description = "";
         this.youtupe_link = "";
         this.image_steps = {};
-        this.exercise_duration = 0;
-        this.number_of_repetitions = 0;
+        this.exercise_duration = null;
+        this.number_of_repetitions = null;
         this.tags = [];
 
         if (exercise) {
@@ -28,12 +28,8 @@ module.exports = class Exercise extends BaseModel {
         }
     }
 
-    parseToResponse(exercise){
-        return exercise;
-    }
-
     static parseFromCreateRequest(exercise) {
-        if (exercise){
+        if (exercise) {
             exercise.id = null;
 
         }
@@ -52,10 +48,27 @@ module.exports = class Exercise extends BaseModel {
         return return_exercise
     }
 
-    static parseExerciseInputList(exerciseList){
-       if (exerciseList && Array.isArray(exerciseList)){
-           return exerciseList.map(exercise=> Exercise.parseFromUpdateRequest(exercise));
-       }
-       return [];
+    static parseExerciseInputList(exerciseList) {
+        if (exerciseList && Array.isArray(exerciseList)) {
+            return exerciseList.map(exercise => Exercise.parseFromUpdateRequest(exercise));
+        }
+        return [];
+    }
+
+    static parseListToResponse(exercises_list) {
+        return !exercises_list ? [] : exercises_list.map(exercise => Exercise.parseToResponse(exercise));
+    }
+
+    static parseToResponse(exercise) {
+        return {
+            id: exercise.id,
+            name: exercise.name,
+            description: exercise.description,
+            youtupe_link: exercise.youtupe_link,
+            exercise_duration: exercise.exercise_duration,
+            number_of_repetitions: exercise.number_of_repetitions,
+            tags: exercise.tags || [],
+            image_steps: exercise.image_steps || {},
+        }
     }
 }

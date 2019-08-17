@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
         let training = TrainingModel.parseFromCreateRequest(req.body);
         logger.silly(training);
         training = await training_service.createTraining(training);
-        res.done(training);
+        res.done(TrainingModel.parseToResponse(training));
     } catch (err) {
         res.error(err);
     }
@@ -23,7 +23,7 @@ router.get('/:training_id', async (req, res) => {
         logger.info("training get ");
         let training_service = new trainingService();
         let training_id = req.params['training_id'];
-        logger.info(training_id)
+        logger.info(training_id);
         let training = await training_service.gettrainingById(training_id);
         res.done(training);
     } catch (err) {

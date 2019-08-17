@@ -19,7 +19,7 @@ module.exports = class exerciseProvider extends db.MongoDBProvider {
             logger.verbose(`${log_path} - parameters - exercise - ${exercise}`);
             this.db_connection = await this.getConnection();
             let exercise_collection = this.db_connection.collection(this.collection_name);
-            buy_list._id = this.uuid2MongoId(exercise.id);
+            exercise._id = this.uuid2MongoId(exercise.id);
             let result = await exercise_collection.insertOne(exercise);
             let item = await this.getById(result.insertedId.toString());
             logger.info(`${log_path} - end`);

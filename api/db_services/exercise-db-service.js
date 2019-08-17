@@ -2,22 +2,22 @@
 
 let ERROR = require('../utilities/errors');
 let provider_factory = require('./provider/datebase-provider-factory');
-let BuyList = require('../models/exercise');
+let ExerciseModel = require('../models/exercise');
 
 module.exports = class ExerciseProvider {
 
     constructor() {
-        this.db_connection = provider_factory.getObjectDBProvider('exercise');
+        this.db_connection = provider_factory('exercise');
     }
 
-    async createExercis(buy_list, conn) {
-        let log_path = 'ExerciseProvider/createExercis -';
+    async createExercise(exercise, conn) {
+        let log_path = 'ExerciseProvider/createExercise -';
         let is_external_connection = true;
         try {
-            let result = await this.db_connection.create(buy_list);
+            let result = await this.db_connection.create(exercise);
             logger.verbose(`${log_path} db result - ${result}`);
-            buy_list = new BuyList(result);
-            return Promise.resolve(buy_list);
+            exercise = new ExerciseModel(result);
+            return Promise.resolve(exercise);
         } catch (err) {
             if (is_external_connection === false) {
 
@@ -35,7 +35,7 @@ module.exports = class ExerciseProvider {
 
             }
             let result = await this.db_connection.update(buy_list, conn);
-            return Promise.resolve(new BuyList(result));
+            return Promise.resolve(new ExerciseModel(result));
         } catch (err) {
             logger.error(`${log_path} error - ${err}`);
             return Promise.reject(err);

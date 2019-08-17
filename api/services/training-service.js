@@ -4,10 +4,10 @@ const uuid = require('uuid').v4;
 const ErrorCode = require("../utilities/errors");
 const ExerciseService = require("./exercise-service");
 
-module.exports = class TrainingService{
+module.exports = class TrainingService {
 
     constructor(db_provider = null) {
-        this.db_provider =  new trainingDBProvider();
+        this.db_provider = new trainingDBProvider();
     }
 
     async createTraining(training) {
@@ -19,11 +19,14 @@ module.exports = class TrainingService{
             training.create_at = new Date().getTime();
             logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
             logger.verbose(`${method_name} - calling TrainingDBProvider/createTraining`);
-            let error =  await TrainingService.validateTraining(training);
-            if(error){
+            let error = await TrainingService.validateTraining(training);
+            if (error) {
                 logger.error(`${method_name} - training not valid ${error}`);
                 return Promise.reject(error);
             }
+
+            this.createExercisesIfNotExist(training.exercises);
+
             training = await this.db_provider.create(training);
             logger.info(`${method_name} - end`);
             return Promise.resolve(training);
@@ -94,43 +97,39 @@ module.exports = class TrainingService{
         }
     }
 
-    async addItems(buy_list_id, items) {
-        let method_name = 'TrainingService/addItems';
+
+    async createExercisesIfNotExist(exercises) {
+        let method_name = 'TrainingService/createExercisesIfNotExist';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - calling BuyListItem/parseListFromInput`);
-            let list_items = BuyListItem.parseListFromInput(items);
-            logger.verbose(`${method_name} - calling BuyListService/isBuyListExist`);
-            let buy_list = this.getById(buy_list_id);
-            let error = this.validateItems(list_items);
-            if (!buy_list || error) {
-                error = !buy_list ? ERROR.ERROR_BUY_LIST_NOT_FOUND : error;
-                logger.error(`${method_name} - error ${error}`);
-            }
-            list_items.map(item => {
-                item.id = uuid();
-                item.buy_list_id = buy_list_id;
-                item.create_at = new Date().getTime();
-                item.is_deleted = 0;
-            });
+            logger.verbose(`${method_name} - create Exercise-Service`);
+            const exercise_service = new ExerciseService();
 
-            logger.verbose(`${method_name} - calling buyListDBProvider/addItems`);
-            buy_list = await this.db_provider.addItems(buy_list_id, list_items);
+            await Promise.all(exercises.map(exercise => {
+                logger.verbose(`${method_name} - calling Exercise-Service create exercise`);
+                if (!exercise.id) {
+                    exercise = exercise_service.createExercise(exercise);
+                }
+                return exercise;
+            }));
+
+            logger.verbose(`${method_name} - calling buyListDBProvider/getListOfBuyList`);
+            let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
+
             logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_list);
+            return Promise.resolve(buy_lists);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);
         }
     }
 
-
-    async static validateTraining(training) {
+    static async validateTraining(training) {
         let method_name = 'TrainingService/validateTraining';
         logger.info(`${method_name} - start`);
         try {
             let error = null;
-            if(!training.name){
+            if (!training.name) {
                 error = ErrorCode.INVALID_TRAINING_NAME;
                 return Promise.resolve(error);
             }
@@ -144,4 +143,4 @@ module.exports = class TrainingService{
     }
 
 
-}
+};

@@ -11,31 +11,31 @@ module.exports = class ExerciseService {
         this.db_provider = db_provider || new buyListDBProvider();
     }
 
-    async createExercise(buy_list) {
+    async createExercise(exercise) {
         let method_name = 'ExerciseService/createExercise';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
-            buy_list.id = uuid();
-            buy_list.create_at = new Date().getTime();
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
+            logger.verbose(`${method_name} - parameter - buy_list - ${exercise}`);
+            exercise.id = uuid();
+            exercise.create_at = new Date().getTime();
+            logger.verbose(`${method_name} - parameter - buy_list - ${exercise}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/createBuyList`);
-            buy_list = await this.db_provider.createBuyList(buy_list);
+            exercise = await this.db_provider.createExercise(exercise);
             logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_list);
+            return Promise.resolve(exercise);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);
         }
     }
 
-    async updateExercise(buy_list) {
+    async updateExercise(exercise) {
         let method_name = 'ExerciseService/updateExercise';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
+            logger.verbose(`${method_name} - parameter - buy_list - ${exercise}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/createExercise`);
-            let buy_list_updated = await this.db_provider.updateBuyList(buy_list);
+            let buy_list_updated = await this.db_provider.updateExercise(exercise);
             logger.info(`${method_name} - end`);
             return Promise.resolve(buy_list_updated);
         } catch (err) {
@@ -44,13 +44,13 @@ module.exports = class ExerciseService {
         }
     }
 
-    async getById(buy_list_id) {
+    async getById(exercise_id) {
         let method_name = 'ExerciseService/getById';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
+            logger.verbose(`${method_name} - parameter - buy_list_id - ${exercise_id}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/getExerciseById`);
-            let buy_list = await this.db_provider.getBuyListById(buy_list_id);
+            let buy_list = await this.db_provider.getExerciseById(exercise_id);
             logger.info(`${method_name} - end`);
             return buy_list;
         } catch (err) {
@@ -59,13 +59,13 @@ module.exports = class ExerciseService {
         }
     }
 
-    async deleteExercise() {
+    async deleteExercise(exercise_id) {
         let method_name = 'ExerciseService/deleteExercise';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
+            logger.verbose(`${method_name} - parameter - buy_list_id - ${exercise_id}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/deleteExercise`);
-            let buy_list = await this.db_provider.deleteBuyList(buy_list_id);
+            let buy_list = await this.db_provider.deleteExercise(exercise_id);
             logger.info(`${method_name} - end`);
             return buy_list;
         } catch (err) {
@@ -80,7 +80,7 @@ module.exports = class ExerciseService {
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
             logger.verbose(`${method_name} - calling buyListDBProvider/getListOfExercise`);
-            let buy_lists = await this.db_provider.getListOfBuyList(search_by, order_by, page_number, page_size);
+            let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
             return Promise.resolve(buy_lists);
@@ -90,28 +90,28 @@ module.exports = class ExerciseService {
         }
     }
 
-    async static validateExercises(exercises_list) {
+    static async validateExercises(exercises_list) {
         let method_name = 'ExerciseService/validateExercises';
         logger.info(`${method_name} - start`);
         try {
             let error = null;
-            let error_arr = Promise.all(exercises_list.map(async (exercise) => {
-                ExerciseService.validateExercise(exercise)
+            let error_arr = await Promise.all(exercises_list.map(async (exercise) => {
+                return ExerciseService.validateExercise(exercise)
             }));
-            error_arr = error_arr.filter(err => err.length());
-            if (error_arr.length()) {
+            error_arr = error_arr.filter(err => err !=null);
+            if (error_arr.length) {
                 logger.error(`${method_name} - error ${error_arr}`);
             }
             logger.info(`${method_name} - end ${error}`);
 
-            return Promise.resolve(error_arr.length() > 0 ? error_arr[0] : null);
+            return Promise.resolve(error_arr.length > 0 ? error_arr[0] : null);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);
         }
     }
 
-    async static validateExercise(exercise) {
+    static async validateExercise(exercise) {
         let method_name = 'ExerciseService/validateExercise';
         logger.info(`${method_name} - start`);
         try {
@@ -133,15 +133,15 @@ module.exports = class ExerciseService {
                     error = ErrorCode.ERROR_EXERCISE_NOT_FOUND;
                 }
             }
-            if (!error && exercise.exercise_duration <= 0) {
+            if (!error && exercise.exercise_duration && exercise.exercise_duration <= 0) {
                 error = ErrorCode.ERROR_EXERCISE_DURATION_SHOULD_BE_POSITIVE;
             }
-            if (!error && exercise.number_of_repetitions <= 0) {
+            if (!error && exercise.number_of_repetitions && exercise.number_of_repetitions <= 0) {
                 error = ErrorCode.ERROR_EXERCISE_REPETITIONS_SHOULD_BE_POSITIVE;
             }
 
             logger.info(`${method_name} - end ${error}`);
-            return Promise.resolve(null);
+            return Promise.resolve(error);
         } catch (err) {
             logger.error(`${method_name} - error Fails in validateExercise ${err}`);
             return Promise.reject(err);

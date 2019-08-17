@@ -25,8 +25,13 @@ module.exports = class Training extends BaseModel {
         }
     }
 
-    parseToResponse(training) {
-        return training;
+    static parseToResponse(training) {
+        return {id :training.id,
+            name:training.name,
+            description:training.description,
+            tags:training.tags,
+            exercises: ExerciseModel.parseListToResponse(training.exercises)
+        };
     }
 
     static parseFromCreateRequest(training) {
