@@ -1,7 +1,7 @@
 'use strict';
 
 const BaseModel = require('./base_model');
-
+const ErrorCode = require('../utilities/errors');
 module.exports = class Exercise extends BaseModel {
 
 
@@ -11,6 +11,7 @@ module.exports = class Exercise extends BaseModel {
         this.name = "";
         this.description = "";
         this.youtupe_link = "";
+        this.image_steps = {};
         this.exercise_duration = 0;
         this.number_of_repetitions = 0;
         this.tags = [];
@@ -23,6 +24,7 @@ module.exports = class Exercise extends BaseModel {
             this.exercise_duration = exercise.exercise_duration;
             this.number_of_repetitions = exercise.number_of_repetitions;
             this.tags = exercise.tags || [];
+            this.image_steps = exercise.image_steps || {};
         }
     }
 
@@ -46,6 +48,7 @@ module.exports = class Exercise extends BaseModel {
         return_exercise.youtupe_link = exercise.youtupe_link;
         return_exercise.exercise_duration = exercise.exercise_duration;
         return_exercise.number_of_repetitions = exercise.number_of_repetitions;
+        return_exercise.image_steps = exercise.image_steps || {};
         return return_exercise
     }
 

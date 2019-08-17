@@ -1,7 +1,8 @@
 const Training = require('../models/training');
-let trainingDBProvider = require("../db_services/training-db-service");
-let uuid = require('uuid').v4;
-
+const trainingDBProvider = require("../db_services/training-db-service");
+const uuid = require('uuid').v4;
+const ErrorCode = require("../utilities/errors");
+const ExerciseService = require("./exercise-service");
 
 module.exports = class TrainingService{
 
@@ -18,6 +19,11 @@ module.exports = class TrainingService{
             training.create_at = new Date().getTime();
             logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
             logger.verbose(`${method_name} - calling TrainingDBProvider/createTraining`);
+            let error =  await TrainingService.validateTraining(training);
+            if(error){
+                logger.error(`${method_name} - training not valid ${error}`);
+                return Promise.reject(error);
+            }
             training = await this.db_provider.create(training);
             logger.info(`${method_name} - end`);
             return Promise.resolve(training);
@@ -119,13 +125,18 @@ module.exports = class TrainingService{
     }
 
 
-    async validateItems(list_items) {
-        let method_name = 'TrainingService/validateItems';
+    async static validateTraining(training) {
+        let method_name = 'TrainingService/validateTraining';
         logger.info(`${method_name} - start`);
         try {
             let error = null;
+            if(!training.name){
+                error = ErrorCode.INVALID_TRAINING_NAME;
+                return Promise.resolve(error);
+            }
+            error = await ExerciseService.validateExercises(training.exercises);
             logger.info(`${method_name} - end ${error}`);
-            return Promise.resolve(null);
+            return Promise.resolve(error);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);

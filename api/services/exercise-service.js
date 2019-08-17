@@ -1,16 +1,18 @@
-const BuyList = require('../models/exercise');
+const Exercise = require('../models/exercise');
+const ErrorCode = require('../utilities/errors');
+
 let buyListDBProvider = require("../db_services/exercise-db-service");
 let uuid = require('uuid').v4;
 
 
-module.exports = class ExerciseService{
+module.exports = class ExerciseService {
 
     constructor(db_provider = null) {
         this.db_provider = db_provider || new buyListDBProvider();
     }
 
-    async createBuyList(buy_list) {
-        let method_name = 'BuyListService/createBuyList';
+    async createExercise(buy_list) {
+        let method_name = 'ExerciseService/createExercise';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
@@ -27,12 +29,12 @@ module.exports = class ExerciseService{
         }
     }
 
-    async updateBuyList(buy_list) {
-        let method_name = 'BuyListService/updateBuyList';
+    async updateExercise(buy_list) {
+        let method_name = 'ExerciseService/updateExercise';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list - ${buy_list}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/createBuyList`);
+            logger.verbose(`${method_name} - calling buyListDBProvider/createExercise`);
             let buy_list_updated = await this.db_provider.updateBuyList(buy_list);
             logger.info(`${method_name} - end`);
             return Promise.resolve(buy_list_updated);
@@ -43,11 +45,11 @@ module.exports = class ExerciseService{
     }
 
     async getById(buy_list_id) {
-        let method_name = 'BuyListService/getById';
+        let method_name = 'ExerciseService/getById';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/getBuyListById`);
+            logger.verbose(`${method_name} - calling buyListDBProvider/getExerciseById`);
             let buy_list = await this.db_provider.getBuyListById(buy_list_id);
             logger.info(`${method_name} - end`);
             return buy_list;
@@ -57,12 +59,12 @@ module.exports = class ExerciseService{
         }
     }
 
-    async deleteBuyList() {
-        let method_name = 'BuyListService/deleteBuyList';
+    async deleteExercise() {
+        let method_name = 'ExerciseService/deleteExercise';
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/deleteBuyList`);
+            logger.verbose(`${method_name} - calling buyListDBProvider/deleteExercise`);
             let buy_list = await this.db_provider.deleteBuyList(buy_list_id);
             logger.info(`${method_name} - end`);
             return buy_list;
@@ -72,12 +74,12 @@ module.exports = class ExerciseService{
         }
     }
 
-    async getListBuyList(search_by, order_by, page_number, page_size) {
-        let method_name = 'BuyListService/createBuyList';
+    async getListExercise(search_by, order_by, page_number, page_size) {
+        let method_name = 'ExerciseService/createExercise';
         logger.info(`${method_name} - start`);
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/getListOfBuyList`);
+            logger.verbose(`${method_name} - calling buyListDBProvider/getListOfExercise`);
             let buy_lists = await this.db_provider.getListOfBuyList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
@@ -88,46 +90,60 @@ module.exports = class ExerciseService{
         }
     }
 
-    async addItems(buy_list_id, items) {
-        let method_name = 'BuyListService/addItems';
+    async static validateExercises(exercises_list) {
+        let method_name = 'ExerciseService/validateExercises';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - calling BuyListItem/parseListFromInput`);
-            let list_items = BuyListItem.parseListFromInput(items);
-            logger.verbose(`${method_name} - calling BuyListService/isBuyListExist`);
-            let buy_list = this.getById(buy_list_id);
-            let error = this.validateItems(list_items);
-            if (!buy_list || error) {
-                error = !buy_list ? ERROR.ERROR_BUY_LIST_NOT_FOUND : error;
-                logger.error(`${method_name} - error ${error}`);
+            let error = null;
+            let error_arr = Promise.all(exercises_list.map(async (exercise) => {
+                ExerciseService.validateExercise(exercise)
+            }));
+            error_arr = error_arr.filter(err => err.length());
+            if (error_arr.length()) {
+                logger.error(`${method_name} - error ${error_arr}`);
             }
-            list_items.map(item => {
-                item.id = uuid();
-                item.buy_list_id = buy_list_id;
-                item.create_at = new Date().getTime();
-                item.is_deleted = 0;
-            });
+            logger.info(`${method_name} - end ${error}`);
 
-            logger.verbose(`${method_name} - calling buyListDBProvider/addItems`);
-            buy_list = await this.db_provider.addItems(buy_list_id, list_items);
-            logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_list);
+            return Promise.resolve(error_arr.length() > 0 ? error_arr[0] : null);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);
         }
     }
 
-
-    async validateItems(list_items) {
-        let method_name = 'BuyListService/validateItems';
+    async static validateExercise(exercise) {
+        let method_name = 'ExerciseService/validateExercise';
         logger.info(`${method_name} - start`);
         try {
+            const exercise_service = new ExerciseService();
             let error = null;
+            if (!exercise) {
+                error = ErrorCode.ERROR_EMPTY_EXERCISE;
+            }
+            if (!error && exercise.id) {
+                try {
+                    exercise_service.getById(exercise.id)
+                } catch (err) {
+                    error = ErrorCode.ERROR_EXERCISE_NOT_FOUND;
+                }
+            }
+            if (!error && !exercise.id) {
+                if (!exercise.name && !exercise.description && !exercise.youtupe_link &&
+                    exercise.image_steps === {} && (exercise.exercise_duration == null) && exercise.number_of_repetitions == null) {
+                    error = ErrorCode.ERROR_EXERCISE_NOT_FOUND;
+                }
+            }
+            if (!error && exercise.exercise_duration <= 0) {
+                error = ErrorCode.ERROR_EXERCISE_DURATION_SHOULD_BE_POSITIVE;
+            }
+            if (!error && exercise.number_of_repetitions <= 0) {
+                error = ErrorCode.ERROR_EXERCISE_REPETITIONS_SHOULD_BE_POSITIVE;
+            }
+
             logger.info(`${method_name} - end ${error}`);
             return Promise.resolve(null);
         } catch (err) {
-            logger.error(`${method_name} - error Fails to create buy_list ${err}`);
+            logger.error(`${method_name} - error Fails in validateExercise ${err}`);
             return Promise.reject(err);
         }
     }
