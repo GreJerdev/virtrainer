@@ -18,13 +18,30 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/:work_time/:rest_time/:number_of_sets', async (req, res) => {
+    try {
+        logger.info("training create ");
+        let training_service = new trainingService();
+        let training = TrainingModel.parseFromCreateRequest(req.body);
+        logger.silly(training);
+        let work_time = req.params['work_time'];
+        let rest_time = req.params['rest_time'];
+        let number_of_sets = req.params['number_of_sets'];
+        training = await training_service.createTrainingWithoutExercises(training,work_time_sec, rest_time_sec, number_of_sets);
+        res.done(TrainingModel.parseToResponse(training));
+    } catch (err) {
+        res.error(err);
+    }
+});
+
+
 router.get('/:training_id', async (req, res) => {
     try {
         logger.info("training get ");
         let training_service = new trainingService();
         let training_id = req.params['training_id'];
         logger.info(training_id);
-        let training = await training_service.gettrainingById(training_id);
+        let training = await training_service.getById(training_id);
         res.done(training);
     } catch (err) {
         res.error(err);

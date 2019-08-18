@@ -18,7 +18,7 @@ module.exports = class TrainingService {
             training.id = uuid();
             training.create_at = new Date().getTime();
             logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
-            logger.verbose(`${method_name} - calling TrainingDBProvider/createTraining`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/validateTraining`);
             let error = await TrainingService.validateTraining(training);
             if (error) {
                 logger.error(`${method_name} - training not valid ${error}`);
@@ -36,6 +36,37 @@ module.exports = class TrainingService {
         }
     }
 
+    async createTrainingWithoutExercises(training, work_time_sec, rest_time_sec, number_of_sets) {
+        let method_name = 'TrainingService/createTrainingWithOutExercises';
+        logger.info(`${method_name} - start`);
+        try {
+            logger.verbose(`${method_name} - parameter - training - ${training}`);
+            training.id = uuid();
+            training.create_at = new Date().getTime();
+            logger.verbose(`${method_name} - parameter - buy_list - ${training}`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/createTrainingWithOutExercises`);
+            if (!training.name){
+                training.name = `${work_time} - ${rest_time} - ${number_of_sets}`
+            }
+
+            let error = await TrainingService.validateTrainingWithOutExercises(training, work_time_sec, rest_time_sec, number_of_sets);
+            if (error) {
+                logger.error(`${method_name} - training not valid ${error}`);
+                return Promise.reject(error);
+            }
+
+            this.createExercisesIfNotExist(training.exercises);
+
+            training = await this.db_provider.create(training);
+            logger.info(`${method_name} - end`);
+            return Promise.resolve(training);
+        } catch (err) {
+            logger.error(`${method_name} - error Fails to create training ${err}`);
+            return Promise.reject(err);
+        }
+    }
+
+
     async updateTraining(training) {
         let method_name = 'TrainingService/updateTraining';
         logger.info(`${method_name} - start`);
@@ -51,13 +82,13 @@ module.exports = class TrainingService {
         }
     }
 
-    async getById(buy_list_id) {
+    async getById(training_id) {
         let method_name = 'TrainingService/getById';
         logger.info(`${method_name} - start`);
         try {
-            logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/getBuyListById`);
-            let buy_list = await this.db_provider.getById(buy_list_id);
+            logger.verbose(`${method_name} - parameter - training_id - ${training_id}`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/getById`);
+            let buy_list = await this.db_provider.getById(training_id);
             logger.info(`${method_name} - end`);
             return buy_list;
         } catch (err) {
@@ -71,7 +102,7 @@ module.exports = class TrainingService {
         logger.info(`${method_name} - start`);
         try {
             logger.verbose(`${method_name} - parameter - buy_list_id - ${buy_list_id}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/deleteBuyList`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/deleteBuyList`);
             let buy_list = await this.db_provider.delete(buy_list_id);
             logger.info(`${method_name} - end`);
             return buy_list;
@@ -86,7 +117,7 @@ module.exports = class TrainingService {
         logger.info(`${method_name} - start`);
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
-            logger.verbose(`${method_name} - calling buyListDBProvider/getListOfBuyList`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/getListOfBuyList`);
             let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
@@ -113,7 +144,7 @@ module.exports = class TrainingService {
                 return exercise;
             }));
 
-            logger.verbose(`${method_name} - calling buyListDBProvider/getListOfBuyList`);
+            logger.verbose(`${method_name} - calling TrainingDBProvider/getListOfBuyList`);
             let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
@@ -137,7 +168,32 @@ module.exports = class TrainingService {
             logger.info(`${method_name} - end ${error}`);
             return Promise.resolve(error);
         } catch (err) {
-            logger.error(`${method_name} - error Fails to create buy_list ${err}`);
+            logger.error(`${method_name} - error Fails to validate training error : ${err}`);
+            return Promise.reject(err);
+        }
+    }
+
+    static async validateTrainingWithOutExercises(training, work_time_sec, rest_time_sec, number_of_sets){
+        let method_name = 'TrainingService/validateTrainingWithOutExercises';
+        logger.info(`${method_name} - start`);
+        try {
+            let error = null;
+            if (Number.isInteger(work_time_sec)) {
+                error = ErrorCode.INVALID_TRAINING_NAME;
+                return Promise.resolve(error);
+            }
+            if (Number.isInteger(rest_time_sec)) {
+                error = ErrorCode.INVALID_TRAINING_NAME;
+                return Promise.resolve(error);
+            }
+            if (Number.isInteger(number_of_sets)) {
+                error = ErrorCode.INVALID_TRAINING_NAME;
+                return Promise.resolve(error);
+            }
+            logger.info(`${method_name} - end ${error}`);
+            return Promise.resolve(error);
+        } catch (err) {
+            logger.error(`${method_name} - error Fails to validate training error : ${err}`);
             return Promise.reject(err);
         }
     }

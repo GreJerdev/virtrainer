@@ -64,8 +64,8 @@ module.exports = class TrainingService {
         try {
             let result = await this.db_connection.getById(training_id);
             if (result) {
-                let training = new Training(result);
-                return Promise.resolve(buy_list);
+                training = new Training(result);
+                return Promise.resolve(training);
             } else {
                 logger.error(`${log_path} error - ${training_id} not found`);
                 return Promise.reject(ERROR.ERROR_TRAINING_NOT_FOUND);
