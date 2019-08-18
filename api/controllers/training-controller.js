@@ -24,10 +24,10 @@ router.post('/:work_time/:rest_time/:number_of_sets', async (req, res) => {
         let training_service = new trainingService();
         let training = TrainingModel.parseFromCreateRequest(req.body);
         logger.silly(training);
-        let work_time = req.params['work_time'];
-        let rest_time = req.params['rest_time'];
-        let number_of_sets = req.params['number_of_sets'];
-        training = await training_service.createTrainingWithoutExercises(training,work_time_sec, rest_time_sec, number_of_sets);
+        let work_time = Number(req.params['work_time']);
+        let rest_time = Number(req.params['rest_time']);
+        let number_of_sets = Number(req.params['number_of_sets']);
+        training = await training_service.createTrainingWithoutExercises(training, work_time, rest_time, number_of_sets);
         res.done(TrainingModel.parseToResponse(training));
     } catch (err) {
         res.error(err);
