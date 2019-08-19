@@ -14,11 +14,14 @@ module.exports = class Training extends BaseModel {
         this.description = "";
         this.exercises = [];
         this.tags = [];
+        this.trainer = null;
+
         if (training) {
             this.id = training.id;
             this.name = training.name;
             this.description = training.description;
             this.tags = training.tags || [];
+            this.trainer = training.trainer;
             if (training.exercises) {
                 this.exercises = training.exercises.map(exercises => new ExerciseModel(exercises));
             };

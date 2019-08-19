@@ -15,6 +15,7 @@ module.exports = class Exercise extends BaseModel {
         this.exercise_duration = null;
         this.number_of_repetitions = null;
         this.tags = [];
+        this.owner = null;
 
         if (exercise) {
             this.id = exercise.id;
@@ -25,6 +26,7 @@ module.exports = class Exercise extends BaseModel {
             this.number_of_repetitions = exercise.number_of_repetitions;
             this.tags = exercise.tags || [];
             this.image_steps = exercise.image_steps || {};
+            this.owner = exercise.owner;
         }
     }
 
