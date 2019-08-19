@@ -23,7 +23,7 @@ module.exports = class Training extends BaseModel {
             this.tags = training.tags || [];
             this.trainer = training.trainer;
             if (training.exercises) {
-                this.exercises = training.exercises.map(exercises => new ExerciseModel(exercises));
+                this.exercises = training.exercises.map(exercise => new ExerciseModel(exercise));
             };
         }
     }

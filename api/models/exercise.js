@@ -17,6 +17,7 @@ module.exports = class Exercise extends BaseModel {
         this.tags = [];
         this.owner = null;
 
+
         if (exercise) {
             this.id = exercise.id;
             this.name = exercise.name;
