@@ -1,7 +1,7 @@
 {
     "db": {
         "mongodb": {
-            "connection_string": "mongodb://user:<username>@<password>.mlab.com:17899/buy_list"
+            "connection_string": "mongodb://dbmainuser:12mlab@ds345937.mlab.com:45937/vir-trainer"
         },
         "use": "mongodb"
     }
