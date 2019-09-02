@@ -87,5 +87,20 @@ router.delete('/:training_id', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    const method_name = 'training-controller/find-list';
+    try {
+        logger.info(`${method_name} - start`);
+
+        let training_service = new TrainingService();
+        let tags = req.param("tags");
+        logger.info(`${method_name} - start`);
+        let recipe = await training_service.getListTraining(tags);
+        logger.info(`${method_name} - end`);
+        res.done(recipe);
+    } catch (err) {
+        res.error(err);
+    }
+});
 
 module.exports = router; 

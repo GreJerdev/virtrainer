@@ -131,10 +131,10 @@ module.exports = class TrainingService {
         try {
             //logger.verbose(`${method_name} - parameter - buy_list - ${search_by, order_by, page_number, page_size}`);
             logger.verbose(`${method_name} - calling TrainingDBProvider/getListOfBuyList`);
-            let buy_lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
+            let lists = await this.db_provider.getList(search_by, order_by, page_number, page_size);
 
             logger.info(`${method_name} - end`);
-            return Promise.resolve(buy_lists);
+            return Promise.resolve(lists);
         } catch (err) {
             logger.error(`${method_name} - error Fails to create buy_list ${err}`);
             return Promise.reject(err);

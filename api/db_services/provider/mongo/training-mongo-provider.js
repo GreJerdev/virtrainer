@@ -94,7 +94,7 @@ module.exports = class trainingProvider extends db.MongoDBProvider {
             };
             let trainings = await this.getCollectionList(filter, order_by, page_number, page_size);
             logger.info(`${log_path} - end`);
-            return Promise.resolve(training);
+            return Promise.resolve(trainings);
         } catch (err) {
             logger.error(`${log_path} error - ${err}`);
             return Promise.reject(err);

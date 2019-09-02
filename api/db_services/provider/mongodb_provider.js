@@ -61,9 +61,9 @@ exports.MongoDBProvider = class MongoDBProvider {
         let is_external_connection = true;
         try {
             this.db_connection = await this.getConnection();
-            let buy_list_collection = this.db_connection.collection(collection_name || this.collection_name);
+            let collection = this.db_connection.collection(collection_name || this.collection_name);
             order = order || {'create_at': 1};
-            let items = await buy_list_collection.find(filter || {}).sort(order).skip(page_number > 0 ? ((page_number - 1) * page_size) : 0).limit(page_size).toArray();
+            let items = await collection.find(filter || {}).sort(order).skip(page_number > 0 ? ((page_number - 1) * page_size) : 0).limit(page_size).toArray();
             logger.verbose(`${log_path} - result items  - ${items}`);
             return Promise.resolve(items);
         } catch (err) {
