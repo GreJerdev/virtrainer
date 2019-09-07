@@ -2,7 +2,7 @@
 
 
 let mysql_provider = null;//require('./mysql_provider');
-let configuration = require('../../configuration/config');
+const configuration = require('../../configuration/config');
 const trainingMongoDBProvider = require('./mongo/training-mongo-provider');
 const exerciseMongoDBProvider = require('./mongo/exercise-mongo-provider');
 
