@@ -1,7 +1,7 @@
 const passport = require("passport");
 const TwitterStrategy = require("passport-twitter");
 const config = require("../configuration/config");
-const User = require("../models/user-model");
+//const User = require("../models/user-model");
 
 // serialize the user.id to save in the cookie session
 // so the browser will remember the user when login
@@ -11,13 +11,16 @@ passport.serializeUser((user, done) => {
 
 // deserialize the cookieUserId to user in the database
 passport.deserializeUser((id, done) => {
-  User.findById(id)
+    done(id)
+    /* User.findById(id)
+
     .then(user => {
       done(null, user);
     })
     .catch(e => {
       done(new Error("Failed to deserialize an user"));
     });
+    */
 });
 
 passport.use(
@@ -29,7 +32,8 @@ passport.use(
     },
     async (token, tokenSecret, profile, done) => {
       // find current user in UserModel
-      const currentUser = await User.findOne({
+      /*
+        const currentUser = await User.findOne({
         twitterId: profile._json.id_str
       });
       // create new user if the database doesn't have this user
@@ -43,8 +47,9 @@ passport.use(
         if (newUser) {
           done(null, newUser);
         }
-      }
-      done(null, currentUser);
+      } */
+      done(null, profile);
     }
+
   )
 );

@@ -15,7 +15,7 @@ init_middleware(app);
 load_routes(app, express);
 app.use(passport.initialize());
 
-const port = 3000;
+const port = 4000;
 app.listen(port);
 logger.log('info', `port ${port}, server started`);
 

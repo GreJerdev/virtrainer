@@ -27,13 +27,13 @@ export default class Header extends Component {
     // Authenticate using via passport api in the backend
     // Open Twitter login page
     // Upon successful login, a cookie session will be stored in the client
-    window.open("http://localhost:4000/auth/twitter", "_self");
+    window.open("http://localhost:4000/api/v1/authentication/twitter", "_self");
   };
 
   _handleLogoutClick = () => {
     // Logout using Twitter passport api
     // Set authenticated state to false in the HomePage
-    window.open("http://localhost:4000/auth/logout", "_self");
+    window.open("http://localhost:4000/api/v1/authentication/logout", "_self");
     this.props.handleNotAuthenticated();
   };
 }

@@ -1,17 +1,17 @@
 {
   "db": {
     "mongodb": {
-      "connection_string": "mongodb://dbmainuser-2d:12mlab@ds345937@11.mlab.com:45937/vir-trainer"
+      "connection_string": "mongodb://dbmainuser:12mlab@ds345937.mlab.com:45937/vir-trainer"
     },
     "use": "mongodb"
   },
   "home_page": "http://localhost:3000",
   "passport": {
     "twitter": {
-      "CONSUMER_KEY": "ZDbNQnr4I2YO1HMu2iiP7timK1",
-      "CONSUMER_SECRET": "I5FqIVc02XM1ezIGdm619JNI0sQiM0xJMPV9k39Qq46eMtA6i11",
-      "ACCESS_TOKEN": "1170258498086744064-S6l659GxfO2427bKDhYb1eaNRoiUu0E",
-      "TOKEN_SECRET": "2b5u3TpSIpRyv7SqB1UmfXETQjRRkL3NFv0aQ9ahwMdsQi"
+      "CONSUMER_KEY": "ZDbNQnr4I2YO1HMu2iiP7timK",
+      "CONSUMER_SECRET": "I5FqIVc02XM1ezIGdm619JNI0sQiM0xJMPV9k39Qq46eMtA6i1",
+      "ACCESS_TOKEN": "1170258498086744064-S6l659GxfO2427bKDhYb1eaNRoiUu0",
+      "TOKEN_SECRET": "2b5u3TpSIpRyv7SqB1UmfXETQjRRkL3NFv0aQ9ahwMdsQ"
     }
   },
   "cookie_key": "thisappisawesome"

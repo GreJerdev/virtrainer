@@ -1,7 +1,7 @@
 const express = require('express');
-outer = express.Router();
-const configuration = require('../../configuration/config');
-
+router = express.Router();
+const configuration = require('../configuration/config');
+const passport = require("passport");
 const CLIENT_HOME_PAGE_URL  = configuration.home_page;
 
 router.get("/login/success", (req, res) => {
