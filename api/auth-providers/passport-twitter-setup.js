@@ -28,7 +28,7 @@ passport.use(
     {
       consumerKey: config.passport.twitter.CONSUMER_KEY,
       consumerSecret: config.passport.twitter.CONSUMER_SECRET,
-      callbackURL: "/auth/twitter/redirect"
+      callbackURL: "/api/v1/authentication/twitter/redirect"
     },
     async (token, tokenSecret, profile, done) => {
       // find current user in UserModel
