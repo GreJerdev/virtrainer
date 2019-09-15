@@ -1,14 +1,14 @@
 const Exercise = require('../models/exercise');
 const ErrorCode = require('../utilities/errors');
 
-let buyListDBProvider = require("../db_services/exercise-db-service");
+let exerciseDBProvider = require("../db_services/exercise-db-service");
 let uuid = require('uuid').v4;
 
 
 module.exports = class ExerciseService {
 
     constructor(db_provider = null) {
-        this.db_provider = db_provider || new buyListDBProvider();
+        this.db_provider = db_provider || new exerciseDBProvider();
     }
 
     async createExercise(exercise) {

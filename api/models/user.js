@@ -1,13 +1,24 @@
 module.exports = class User extends BaseModel {
 
 
-    constructor(training) {
-        super(training);
+    constructor(user) {
+        super(user);
         this.id = "";
         this.name = "";
-        this.description = "";
-        this.exercises = [];
-        this.tags = [];
-        this.trainer = null;
+        this.data = {};
+        this.trainings = [];
+        this.traineres = [];
+        this.trainees = [];
+
+
+        if(user){
+            this.id =user.id;
+            this.name = user.name;
+            this.data = user.data;
+            this.trainings = user.trainings;
+            this.traineres = user.traineres;
+            this.trainees = user.trainees;
+        }
+
     }
 }
