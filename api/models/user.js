@@ -1,3 +1,8 @@
+
+'use strict';
+
+const BaseModel = require('./base_model');
+
 module.exports = class User extends BaseModel {
 
 
@@ -9,6 +14,7 @@ module.exports = class User extends BaseModel {
         this.trainings = [];
         this.traineres = [];
         this.trainees = [];
+        this.oAuth = [];
 
 
         if(user){
@@ -18,7 +24,8 @@ module.exports = class User extends BaseModel {
             this.trainings = user.trainings;
             this.traineres = user.traineres;
             this.trainees = user.trainees;
+            this.oAuth = user.oAuth;
         }
 
     }
-}
+};
