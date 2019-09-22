@@ -16,7 +16,7 @@ passport.serializeUser((user, done) => {
 // deserialize the cookieUserId to user in the database
 passport.deserializeUser((id, done) => {
     const user_service = new UserService();
-    user_service.getByOAuth('twitter', id).then(user => {
+    user_service.getById(id).then(user => {
         done(null, user);
     }).catch(e => {
         done(new Error("Failed to deserialize an user"));

@@ -6,7 +6,7 @@ module.exports = class userProvider extends db.MongoDBProvider {
 
     constructor() {
         super();
-        this.collection_name = 'user';
+        this.collection_name = 'users';
     }
 
     async create(user, conn = null) {
@@ -74,6 +74,7 @@ module.exports = class userProvider extends db.MongoDBProvider {
                     {"is_deleted": false}
                 ]
             });
+
             logger.info(`${log_path} - end`);
             return Promise.resolve(user);
         } catch (err) {
@@ -87,9 +88,9 @@ module.exports = class userProvider extends db.MongoDBProvider {
         logger.info(`${log_path} - start`);
         try {
             logger.verbose(`${log_path} - parameters - user_id - ${id}`);
-            let training = await db.MongoDBProvider.prototype.getById.call(this, id, conn);
+            let user = await db.MongoDBProvider.prototype.getById.call(this, id, conn);
             logger.info(`${log_path} - end`);
-            return Promise.resolve(training);
+            return Promise.resolve(user);
         } catch (err) {
             logger.error(`${log_path} error - ${err}`);
             return Promise.reject(err);

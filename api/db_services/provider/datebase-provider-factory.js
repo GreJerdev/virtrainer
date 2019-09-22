@@ -30,7 +30,7 @@ module.exports = function (object_name) {
                 case 'exercise':
                     return new exerciseMongoDBProvider();
                     break;
-                case 'user':
+                case 'users':
                     return new userMongoDBProvider();
                     break;
 
